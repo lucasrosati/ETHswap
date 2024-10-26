@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { FaEthereum } from 'react-icons/fa';
+import Web3 from 'web3';
 
 class SellForm extends Component {
   constructor(props) {
@@ -12,22 +13,31 @@ class SellForm extends Component {
   handleChange = (event) => {
     const tokenAmount = event.target.value;
     this.setState({
-      output: tokenAmount / 100
+      output: (tokenAmount / 100).toFixed(4)
     });
+  };
+
+  handleSubmit = async (event) => {
+    event.preventDefault();
+    let tokenAmount = this.input.value.toString();
+    tokenAmount = Web3.utils.toWei(tokenAmount, 'Ether');
+    
+    try {
+      await this.props.sellTokens(tokenAmount);
+      alert('Venda realizada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao vender tokens:', error);
+      alert('Falha na venda de tokens. Tente novamente.');
+    }
   };
 
   render() {
     return (
-      <form onSubmit={(event) => {
-        event.preventDefault();
-        let tokenAmount = this.input.value.toString();
-        tokenAmount = window.web3.utils.toWei(tokenAmount, 'Ether');
-        this.props.sellTokens(tokenAmount);
-      }}>
+      <form onSubmit={this.handleSubmit}>
         <div>
           <label className="float-left"><b>Input</b></label>
           <span className="float-right text-muted">
-            Balance: {this.props.tokenBalance}
+            Balance: {(this.props.tokenBalance / 1e18).toFixed(4)} DApp
           </span>
           <div className="input-group mb-4">
             <input
@@ -36,7 +46,8 @@ class SellForm extends Component {
               ref={(input) => { this.input = input }}
               className="form-control form-control-lg"
               placeholder="0"
-              required />
+              required
+            />
             <div className="input-group-append">
               <div className="input-group-text">DApp</div>
             </div>
@@ -45,7 +56,7 @@ class SellForm extends Component {
         <div>
           <label className="float-left"><b>Output</b></label>
           <span className="float-right text-muted">
-            Balance: {this.props.ethBalance}
+            Balance: {(this.props.ethBalance / 1e18).toFixed(4)} ETH
           </span>
           <div className="input-group mb-2">
             <input

@@ -1,110 +1,103 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
-import Token from '../abis/Token.json';
-import EthSwap from '../abis/EthSwap.json';
-import Navbar from './Navbar';
-import BuyForm from './BuyForm';
-import SellForm from './SellForm';
+import ethIcon from '../assets/eth-icon.png';
+import dappIcon from '../assets/dapp-icon.png';
 import { FaExchangeAlt } from 'react-icons/fa';
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      account: '',
-      ethBalance: '0',
-      tokenBalance: '0',
-      ethSwap: null,
-      token: null,
-      amount: '0',
-      transactionType: 'buy', // 'buy' or 'sell'
+      isEthToDapp: true,
+      inputValue: '',
+      outputValue: '',
     };
   }
 
-  async componentDidMount() {
-    await this.loadBlockchainData();
-  }
-
-  async loadBlockchainData() {
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
-    const accounts = await web3.eth.getAccounts();
-    this.setState({ account: accounts[0] });
-
-    const ethBalance = await web3.eth.getBalance(accounts[0]);
-    this.setState({ ethBalance: web3.utils.fromWei(ethBalance, 'Ether') });
-
-    const networkId = await web3.eth.net.getId();
-
-    const tokenData = Token.networks[networkId];
-    if (tokenData) {
-      const token = new web3.eth.Contract(Token.abi, tokenData.address);
-      this.setState({ token });
-      const tokenBalance = await token.methods.balanceOf(this.state.account).call();
-      this.setState({ tokenBalance: web3.utils.fromWei(tokenBalance.toString(), 'Ether') });
-    } else {
-      window.alert('Token contract not deployed to detected network.');
-    }
-
-    const ethSwapData = EthSwap.networks[networkId];
-    if (ethSwapData) {
-      const ethSwap = new web3.eth.Contract(EthSwap.abi, ethSwapData.address);
-      this.setState({ ethSwap });
-    } else {
-      window.alert('EthSwap contract not deployed to detected network.');
-    }
-  }
-
-  buyTokens = (etherAmount) => {
-    this.state.ethSwap.methods.buyTokens()
-      .send({ value: etherAmount, from: this.state.account })
-      .on('transactionHash', (hash) => {
-        this.loadBlockchainData();
-      });
+  handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    const outputValue = this.state.isEthToDapp
+      ? (inputValue * 100).toFixed(4) // Conversão de ETH para DAPP
+      : (inputValue / 100).toFixed(4); // Conversão de DAPP para ETH
+    this.setState({ inputValue, outputValue });
   };
 
-  sellTokens = (tokenAmount) => {
-    this.state.token.methods.approve(this.state.ethSwap._address, tokenAmount)
-      .send({ from: this.state.account })
-      .on('transactionHash', (hash) => {
-        this.state.ethSwap.methods.sellTokens(tokenAmount).send({ from: this.state.account })
-          .on('transactionHash', (hash) => {
-            this.loadBlockchainData();
-          });
-      });
+  invertTokens = () => {
+    this.setState((prevState) => ({
+      isEthToDapp: !prevState.isEthToDapp,
+      inputValue: '',
+      outputValue: '',
+    }));
   };
 
-  toggleDarkMode = () => {
-    document.body.classList.toggle('dark-mode');
+  handleSwap = async () => {
+    const { isEthToDapp, inputValue } = this.state;
+    const { buyTokens, sellTokens } = this.props;
+
+    if (isEthToDapp) {
+      try {
+        const valueInWei = Web3.utils.toWei(inputValue, 'ether');
+        await buyTokens(valueInWei);
+      } catch (error) {
+        console.error("Erro na compra de tokens:", error);
+      }
+    } else {
+      try {
+        const valueInWei = Web3.utils.toWei(inputValue, 'ether');
+        await sellTokens(valueInWei);
+      } catch (error) {
+        console.error("Erro na venda de tokens:", error);
+      }
+    }
   };
 
   render() {
-    const { ethBalance, tokenBalance } = this.state;
+    const { isEthToDapp, inputValue, outputValue } = this.state;
+    const { ethBalance, tokenBalance } = this.props;
 
     return (
-      <div className="container">
-        <Navbar account={this.state.account} />
-        <button onClick={this.toggleDarkMode} className="dark-mode-toggle">
-          🌙
-        </button>
-        <h2>Swap</h2>
-        <div className="swap-container">
-          {this.state.transactionType === 'buy' ? (
-            <BuyForm
-              ethBalance={ethBalance}
-              tokenBalance={tokenBalance}
-              buyTokens={this.buyTokens}
+      <div className="swap-container">
+        {/* Campo de Entrada */}
+        <div className="input-group">
+          <label>{isEthToDapp ? 'ETH' : 'DApp'}</label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={isEthToDapp ? ethIcon : dappIcon} alt="Token" style={{ width: '32px', height: '32px', marginRight: '8px' }} />
+            <input
+              type="text"
+              value={inputValue}
+              onChange={this.handleInputChange}
+              placeholder=""
             />
-          ) : (
-            <SellForm
-              ethBalance={ethBalance}
-              tokenBalance={tokenBalance}
-              sellTokens={this.sellTokens}
-            />
-          )}
-          <button onClick={() => this.setState({ transactionType: this.state.transactionType === 'buy' ? 'sell' : 'buy' })} className="invert-button">
+          </div>
+          <span className="balance">Balance: {isEthToDapp ? parseFloat(ethBalance).toFixed(4) : parseFloat(tokenBalance).toFixed(4)}</span>
+        </div>
+
+        {/* Botão de Inverter */}
+        <div className="invert-button-container">
+          <button className="invert-button" onClick={this.invertTokens}>
             <FaExchangeAlt />
           </button>
         </div>
+
+        {/* Campo de Saída */}
+        <div className="input-group">
+          <label>{isEthToDapp ? 'DApp' : 'ETH'}</label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={isEthToDapp ? dappIcon : ethIcon} alt="Token" style={{ width: '32px', height: '32px', marginRight: '8px' }} />
+            <input
+              type="text"
+              value={outputValue || ''}
+              readOnly
+              placeholder=""
+            />
+          </div>
+          <span className="balance">Balance: {isEthToDapp ? parseFloat(tokenBalance).toFixed(4) : parseFloat(ethBalance).toFixed(4)}</span>
+        </div>
+
+        {/* Botão Swap */}
+        <button className="swap-button" onClick={this.handleSwap} style={{ marginTop: '15px', padding: '10px 20px', fontSize: '16px' }}>
+          Swap
+        </button>
       </div>
     );
   }

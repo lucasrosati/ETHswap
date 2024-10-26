@@ -39,23 +39,29 @@ class App extends Component {
   async loadBlockchainData() {
     const web3 = window.web3;
 
+    // Conta do usuário conectada
     const accounts = await web3.eth.getAccounts();
     this.setState({ account: accounts[0] });
 
+    // Saldo de ETH
     const ethBalance = await web3.eth.getBalance(this.state.account);
-    this.setState({ ethBalance });
+    this.setState({ ethBalance: web3.utils.fromWei(ethBalance, 'ether') });
 
+    // Obtendo o contrato Token
     const networkId = await web3.eth.net.getId();
     const tokenData = Token.networks[networkId];
     if (tokenData) {
       const token = new web3.eth.Contract(Token.abi, tokenData.address);
       this.setState({ token });
-      let tokenBalance = await token.methods.balanceOf(this.state.account).call();
-      this.setState({ tokenBalance: tokenBalance.toString() });
+
+      // Balance de Tokens
+      const tokenBalance = await token.methods.balanceOf(this.state.account).call();
+      this.setState({ tokenBalance: web3.utils.fromWei(tokenBalance.toString(), 'ether') });
     } else {
       window.alert('Token contract not deployed to detected network.');
     }
 
+    // Obtendo o contrato EthSwap
     const ethSwapData = EthSwap.networks[networkId];
     if (ethSwapData) {
       const ethSwap = new web3.eth.Contract(EthSwap.abi, ethSwapData.address);
@@ -66,6 +72,41 @@ class App extends Component {
 
     this.setState({ loading: false });
   }
+
+  // Função para comprar tokens
+  buyTokens = (etherAmount) => {
+    this.setState({ loading: true });
+    this.state.ethSwap.methods.buyTokens().send({ value: etherAmount, from: this.state.account })
+      .on('transactionHash', (hash) => {
+        this.setState({ loading: false });
+        window.alert('Compra realizada com sucesso!');
+      })
+      .on('error', (error) => {
+        console.error('Erro ao comprar tokens:', error);
+        this.setState({ loading: false });
+      });
+  };
+
+  // Função para vender tokens
+  sellTokens = (tokenAmount) => {
+    this.setState({ loading: true });
+    this.state.token.methods.approve(this.state.ethSwap._address, tokenAmount).send({ from: this.state.account })
+      .on('transactionHash', (hash) => {
+        this.state.ethSwap.methods.sellTokens(tokenAmount).send({ from: this.state.account })
+          .on('transactionHash', (hash) => {
+            this.setState({ loading: false });
+            window.alert('Venda realizada com sucesso!');
+          })
+          .on('error', (error) => {
+            console.error('Erro ao vender tokens:', error);
+            this.setState({ loading: false });
+          });
+      })
+      .on('error', (error) => {
+        console.error('Erro ao aprovar tokens:', error);
+        this.setState({ loading: false });
+      });
+  };
 
   toggleDarkMode = () => {
     this.setState({ darkMode: !this.state.darkMode }, () => {
@@ -78,23 +119,22 @@ class App extends Component {
     if (this.state.loading) {
       content = <p id="loader" className="text-center">Loading...</p>;
     } else {
-      content = <Main
-                  ethBalance={this.state.ethBalance}
-                  tokenBalance={this.state.tokenBalance}
-                  buyTokens={this.buyTokens}
-                  sellTokens={this.sellTokens}
-                />;
+      content = (
+        <Main
+          ethBalance={this.state.ethBalance}
+          tokenBalance={this.state.tokenBalance}
+          buyTokens={this.buyTokens}
+          sellTokens={this.sellTokens}
+        />
+      );
     }
 
     return (
       <div>
         <Navbar account={this.state.account} />
-        
-        {/* Botão de Dark Mode fora da Navbar */}
         <button onClick={this.toggleDarkMode} className="dark-mode-toggle">
           {this.state.darkMode ? '🌞' : '🌙'}
         </button>
-
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '600px' }}>
