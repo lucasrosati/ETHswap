@@ -1,1 +1,66 @@
-/* Styles go here */
+:root {
+    --background: #ffffff;
+    --text-color: #000000;
+    --card-background: #f8f9fa;
+  }
+  
+  body.dark-mode {
+    --background: #0d1117;
+    --text-color: #c9d1d9;
+    --card-background: #161b22;
+  }
+  
+  body {
+    background-color: var(--background);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  #theme-switch {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #theme-switch svg {
+    fill: var(--text-color);
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s ease;
+  }
+  
+  #theme-switch:hover svg {
+    transform: scale(1.1);
+  }
+  
+  .navbar {
+    background-color: var(--card-background);
+    padding: 1rem;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
+  }
+  
+  .card {
+    background-color: var(--card-background);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+  }
+  
+  button {
+    color: var(--text-color);
+  }
+  
+  

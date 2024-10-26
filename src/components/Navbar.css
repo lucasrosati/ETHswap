@@ -1,0 +1,37 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+  }
+  
+  .account-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    max-width: 70%; /* Reduz a largura máxima para mover o endereço mais para a esquerda */
+    padding-right: 10px;
+  }
+  
+  .account-address {
+    font-size: 0.85rem;
+    margin-right: 40px; /* Aumenta o espaço entre o endereço e o ícone */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  
+  #theme-switch {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    margin-top: -7.4px; /* Ajuste fino para alinhar com o endereço */
+    margin-right: 1.5px; /* Espaço à direita para ajuste */
+}
+
+
+  
