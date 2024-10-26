@@ -88,8 +88,13 @@ class App extends Component {
 
     return (
       <div>
-        <Navbar account={this.state.account} toggleDarkMode={this.toggleDarkMode} />
+        <Navbar account={this.state.account} />
         
+        {/* Botão de Dark Mode fora da Navbar */}
+        <button onClick={this.toggleDarkMode} className="dark-mode-toggle">
+          {this.state.darkMode ? '🌞' : '🌙'}
+        </button>
+
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '600px' }}>

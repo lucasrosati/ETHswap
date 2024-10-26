@@ -1,37 +1,57 @@
+/* Navbar.css */
+
+/* Navbar padrão */
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 15px;
-  }
-  
-  .account-section {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    max-width: 70%; /* Reduz a largura máxima para mover o endereço mais para a esquerda */
-    padding-right: 10px;
-  }
-  
-  .account-address {
-    font-size: 0.85rem;
-    margin-right: 40px; /* Aumenta o espaço entre o endereço e o ícone */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  
-  #theme-switch {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    margin-top: -7.4px; /* Ajuste fino para alinhar com o endereço */
-    margin-right: 1.5px; /* Espaço à direita para ajuste */
+  background-color: #343a40;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
+/* Marca do Navbar */
+.navbar .navbar-brand {
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
 
-  
+/* Seção de conta */
+.navbar .account-section {
+  display: flex;
+  align-items: center;
+}
+
+/* Endereço da conta */
+.navbar .account-address {
+  color: white;
+  font-size: 1rem;
+  margin-right: 15px;
+}
+
+/* Estilo do botão de dark mode */
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: white;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+
+/* Ajustes para o dark mode */
+body.dark-mode .navbar {
+  background-color: #1e1e1e;
+}
+
+body.dark-mode .navbar .navbar-brand,
+body.dark-mode .navbar .account-address {
+  color: #ffffff;
+}
+
+body.dark-mode .dark-mode-toggle {
+  color: #ffffff;
+}
