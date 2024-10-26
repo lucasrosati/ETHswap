@@ -91,13 +91,15 @@ EthSwap is a decentralized exchange application built on Ethereum, allowing user
 ## Screenshots
 
 ### Home Page
-[Home Page](https://github.com/user-attachments/assets/ea81ca1a-a170-4ebe-9e92-5c45863957db)
+[Home Page](https://github.com/user-attachments/assets/302abbef-c662-4e42-bcb1-7e0a0d8914be)
+
 
 ### Buy Tokens
-![Buy Tokens](path-to-your-screenshot.png)
+[Buy Tokens](https://github.com/user-attachments/assets/ea81ca1a-a170-4ebe-9e92-5c45863957db))
 
-### Sell Tokens
-![Sell Tokens](path-to-your-screenshot.png)
+### MetaMask Confirmation
+[Metamask Confirmation](https://github.com/user-attachments/assets/dce25c16-ea66-4df6-8b00-702dbe714daf)
+
 
 ## Built With
 
