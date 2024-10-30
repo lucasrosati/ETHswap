@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Web3 from 'web3';
 import ethIcon from '../assets/eth-icon.png';
 import dappIcon from '../assets/dapp-icon.png';
 import { FaExchangeAlt } from 'react-icons/fa';
@@ -8,7 +7,7 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isEthToDapp: true,
+      isEthToDapp: true, // ETH para DApp inicialmente
       inputValue: '',
       outputValue: '',
     };
@@ -22,32 +21,25 @@ class Main extends Component {
     this.setState({ inputValue, outputValue });
   };
 
-  invertTokens = () => {
-    this.setState((prevState) => ({
-      isEthToDapp: !prevState.isEthToDapp,
-      inputValue: '',
-      outputValue: '',
-    }));
-  };
-
   handleSwap = async () => {
     const { isEthToDapp, inputValue } = this.state;
-    const { buyTokens, sellTokens } = this.props;
+    const { buyTokens, sellTokens, web3 } = this.props;
 
-    if (isEthToDapp) {
-      try {
-        const valueInWei = Web3.utils.toWei(inputValue, 'ether');
+    try {
+      const valueInWei = web3.utils.toWei(inputValue.toString(), 'ether');
+
+      if (isEthToDapp) {
+        // ETH para DApp
         await buyTokens(valueInWei);
-      } catch (error) {
-        console.error("Erro na compra de tokens:", error);
-      }
-    } else {
-      try {
-        const valueInWei = Web3.utils.toWei(inputValue, 'ether');
+      } else {
+        // DApp para ETH
         await sellTokens(valueInWei);
-      } catch (error) {
-        console.error("Erro na venda de tokens:", error);
       }
+
+      // Limpar os valores de entrada e saída após a transação
+      this.setState({ inputValue: '', outputValue: '' });
+    } catch (error) {
+      console.error('Erro ao realizar o swap:', error);
     }
   };
 
@@ -66,15 +58,15 @@ class Main extends Component {
               type="text"
               value={inputValue}
               onChange={this.handleInputChange}
-              placeholder=""
+              placeholder="0"
             />
           </div>
           <span className="balance">Balance: {isEthToDapp ? parseFloat(ethBalance).toFixed(4) : parseFloat(tokenBalance).toFixed(4)}</span>
         </div>
 
-        {/* Botão de Inverter */}
+        {/* Botão de Swap (apenas realiza a transação, sem inverter os tokens) */}
         <div className="invert-button-container">
-          <button className="invert-button" onClick={this.invertTokens}>
+          <button className="invert-button" onClick={() => this.setState({ isEthToDapp: !isEthToDapp })}>
             <FaExchangeAlt />
           </button>
         </div>
@@ -88,13 +80,13 @@ class Main extends Component {
               type="text"
               value={outputValue || ''}
               readOnly
-              placeholder=""
+              placeholder="0"
             />
           </div>
           <span className="balance">Balance: {isEthToDapp ? parseFloat(tokenBalance).toFixed(4) : parseFloat(ethBalance).toFixed(4)}</span>
         </div>
 
-        {/* Botão Swap */}
+        {/* Botão de Swap */}
         <button className="swap-button" onClick={this.handleSwap} style={{ marginTop: '15px', padding: '10px 20px', fontSize: '16px' }}>
           Swap
         </button>
