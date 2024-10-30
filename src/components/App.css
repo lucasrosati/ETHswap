@@ -112,11 +112,11 @@ body.dark-mode .invert-button {
 }
 
 body.dark-mode .dark-mode-toggle .icon-size {
-  color: #ffd700; /* Cor do ícone de sol no modo escuro */
+  color: #ffd700; 
 }
 
 body:not(.dark-mode) .dark-mode-toggle .icon-size {
-  color: #333333; /* Cor do ícone de lua no modo claro */
+  color: #333333; 
 }
 
 .input-group {
@@ -132,4 +132,31 @@ body:not(.dark-mode) .dark-mode-toggle .icon-size {
 
 .input-group img {
   margin-right: 10px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  font-size: 14px;
+}
+
+.footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+body.dark-mode .footer {
+  background-color: #121212; 
+}
+
+body.dark-mode .footer a {
+  color: #6a1b9a; 
 }
