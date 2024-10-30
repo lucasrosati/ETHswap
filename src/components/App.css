@@ -67,10 +67,7 @@ body.dark-mode .swap-button {
   background-color: #6a1b9a;
 }
 
-.swap-button:focus {
-  outline: none;
-}
-
+.swap-button:focus,
 .swap-button:active {
   outline: none;
 }
@@ -101,15 +98,25 @@ body.dark-mode .invert-button {
   position: fixed;
   top: 38px;
   right: 20px;
-  font-size: 1.8rem;
   cursor: pointer;
   z-index: 1001;
   background: none;
   border: none;
+  outline: none;
 }
 
-.dark-mode-toggle:focus {
-  outline: none;
+.icon-size {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+}
+
+body.dark-mode .dark-mode-toggle .icon-size {
+  color: #ffd700; /* Cor do ícone de sol no modo escuro */
+}
+
+body:not(.dark-mode) .dark-mode-toggle .icon-size {
+  color: #333333; /* Cor do ícone de lua no modo claro */
 }
 
 .input-group {
