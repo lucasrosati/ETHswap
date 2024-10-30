@@ -1,6 +1,3 @@
-/* Navbar.css */
-
-/* Navbar padrão */
 .navbar {
   background-color: #343a40;
   color: white;
@@ -9,27 +6,23 @@
   justify-content: space-between;
 }
 
-/* Marca do Navbar */
 .navbar .navbar-brand {
   color: white;
   font-size: 1.25rem;
   cursor: pointer;
 }
 
-/* Seção de conta */
 .navbar .account-section {
   display: flex;
   align-items: center;
 }
 
-/* Endereço da conta */
 .navbar .account-address {
   color: white;
   font-size: 1rem;
   margin-right: 15px;
 }
 
-/* Estilo do botão de dark mode */
 .dark-mode-toggle {
   background: none;
   border: none;
@@ -42,9 +35,8 @@
   padding: 5px;
 }
 
-/* Ajustes para o dark mode */
 body.dark-mode .navbar {
-  background-color: #1e1e1e;
+  background-color: #003b5c;
 }
 
 body.dark-mode .navbar .navbar-brand,
@@ -54,4 +46,10 @@ body.dark-mode .navbar .account-address {
 
 body.dark-mode .dark-mode-toggle {
   color: #ffffff;
+}
+
+.navbar button:focus,
+.navbar a:focus,
+.dark-mode-toggle:focus {
+  outline: none;
 }

@@ -7,6 +7,19 @@ import Main from './Main';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      account: '',
+      token: null,
+      ethSwap: null,
+      ethBalance: '0',
+      tokenBalance: '0',
+      loading: true,
+      darkMode: false
+    };
+  }
+
   async componentDidMount() {
     await this.loadWeb3();
     await this.loadBlockchainData();
@@ -33,18 +46,16 @@ class App extends Component {
 
     const networkId = await web3.eth.net.getId();
 
-    // Load Token Contract
     const tokenData = Token.networks[networkId];
     if (tokenData) {
       const token = new web3.eth.Contract(Token.abi, tokenData.address);
       this.setState({ token });
       let tokenBalance = await token.methods.balanceOf(this.state.account).call();
-      this.setState({ tokenBalance: web3.utils.fromWei(tokenBalance.toString(), 'ether') }); // Convertendo tokenBalance para string
+      this.setState({ tokenBalance: web3.utils.fromWei(tokenBalance.toString(), 'ether') });
     } else {
       window.alert('Token contract not deployed to detected network.');
     }
 
-    // Load EthSwap Contract
     const ethSwapData = EthSwap.networks[networkId];
     if (ethSwapData) {
       const ethSwap = new web3.eth.Contract(EthSwap.abi, ethSwapData.address);
@@ -55,6 +66,14 @@ class App extends Component {
 
     this.setState({ loading: false });
   }
+
+  toggleDarkMode = () => {
+    this.setState(prevState => ({
+      darkMode: !prevState.darkMode
+    }), () => {
+      document.body.classList.toggle('dark-mode', this.state.darkMode);
+    });
+  };
 
   buyTokens = (etherAmount) => {
     this.setState({ loading: true });
@@ -68,26 +87,21 @@ class App extends Component {
         this.setState({ loading: false });
       });
   }
-  
+
   sellTokens = async (tokenAmount) => {
     try {
       this.setState({ loading: true });
-  
       const { token, ethSwap, account } = this.state;
-  
-      // Verifique se o contrato EthSwap está carregado corretamente
+
       if (!ethSwap || !ethSwap.options.address) {
         window.alert('Contrato EthSwap não foi carregado corretamente.');
         this.setState({ loading: false });
         return;
       }
-  
-      // Aprovação para gastar tokens
+
       await token.methods.approve(ethSwap.options.address, tokenAmount).send({ from: account })
         .on('transactionHash', async (hash) => {
           console.log("Aprovação confirmada:", hash);
-  
-          // Após a aprovação, realizar a venda de tokens
           await ethSwap.methods.sellTokens(tokenAmount).send({ from: account })
             .on('transactionHash', (hash) => {
               console.log("Venda de tokens realizada:", hash);
@@ -108,18 +122,6 @@ class App extends Component {
       this.setState({ loading: false });
     }
   };
-  
-  constructor(props) {
-    super(props);
-    this.state = {
-      account: '',
-      token: null,
-      ethSwap: null,
-      ethBalance: '0',
-      tokenBalance: '0',
-      loading: true
-    };
-  }
 
   render() {
     let content;
@@ -138,6 +140,12 @@ class App extends Component {
     return (
       <div>
         <Navbar account={this.state.account} />
+        <button
+          onClick={this.toggleDarkMode}
+          className="dark-mode-toggle"
+        >
+          {this.state.darkMode ? '☀️' : '🌙'}
+        </button>
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '600px' }}>

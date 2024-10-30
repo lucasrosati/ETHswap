@@ -7,7 +7,7 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isEthToDapp: true, // ETH para DApp inicialmente
+      isEthToDapp: true, 
       inputValue: '',
       outputValue: '',
     };
@@ -16,8 +16,8 @@ class Main extends Component {
   handleInputChange = (e) => {
     const inputValue = e.target.value;
     const outputValue = this.state.isEthToDapp
-      ? (inputValue * 100).toFixed(4) // Conversão de ETH para DAPP
-      : (inputValue / 100).toFixed(4); // Conversão de DAPP para ETH
+      ? (inputValue * 100).toFixed(4) 
+      : (inputValue / 100).toFixed(4); 
     this.setState({ inputValue, outputValue });
   };
 
@@ -29,18 +29,25 @@ class Main extends Component {
       const valueInWei = web3.utils.toWei(inputValue.toString(), 'ether');
 
       if (isEthToDapp) {
-        // ETH para DApp
         await buyTokens(valueInWei);
       } else {
-        // DApp para ETH
         await sellTokens(valueInWei);
       }
 
-      // Limpar os valores de entrada e saída após a transação
       this.setState({ inputValue: '', outputValue: '' });
     } catch (error) {
       console.error('Erro ao realizar o swap:', error);
     }
+  };
+
+  invertTokens = () => {
+    const { inputValue, outputValue, isEthToDapp } = this.state;
+
+    this.setState({
+      isEthToDapp: !isEthToDapp,
+      inputValue: isEthToDapp ? outputValue : inputValue,
+      outputValue: isEthToDapp ? inputValue : outputValue,
+    });
   };
 
   render() {
@@ -49,45 +56,50 @@ class Main extends Component {
 
     return (
       <div className="swap-container">
-        {/* Campo de Entrada */}
         <div className="input-group">
-          <label>{isEthToDapp ? 'ETH' : 'DApp'}</label>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src={isEthToDapp ? ethIcon : dappIcon} alt="Token" style={{ width: '32px', height: '32px', marginRight: '8px' }} />
-            <input
-              type="text"
-              value={inputValue}
-              onChange={this.handleInputChange}
-              placeholder="0"
+          <div className="input-group-label">
+            <label>{isEthToDapp ? 'ETH' : 'DApp'}</label>
+            <img
+              src={isEthToDapp ? ethIcon : dappIcon}
+              alt="Token"
+              style={{ width: '32px', height: '32px', marginLeft: '8px', marginRight: '8px' }}
             />
           </div>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={this.handleInputChange}
+            placeholder="0"
+          />
           <span className="balance">Balance: {isEthToDapp ? parseFloat(ethBalance).toFixed(4) : parseFloat(tokenBalance).toFixed(4)}</span>
         </div>
 
-        {/* Botão de Swap (apenas realiza a transação, sem inverter os tokens) */}
         <div className="invert-button-container">
-          <button className="invert-button" onClick={() => this.setState({ isEthToDapp: !isEthToDapp })}>
+          <button className="invert-button" onClick={this.invertTokens}>
             <FaExchangeAlt />
           </button>
         </div>
 
-        {/* Campo de Saída */}
         <div className="input-group">
-          <label>{isEthToDapp ? 'DApp' : 'ETH'}</label>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src={isEthToDapp ? dappIcon : ethIcon} alt="Token" style={{ width: '32px', height: '32px', marginRight: '8px' }} />
-            <input
-              type="text"
-              value={outputValue || ''}
-              readOnly
-              placeholder="0"
+          <div className="input-group-label">
+            <label>{isEthToDapp ? 'DApp' : 'ETH'}</label>
+            <img
+              src={isEthToDapp ? dappIcon : ethIcon}
+              alt="Token"
+              style={{ width: '32px', height: '32px', marginLeft: '8px', marginRight: '8px' }}
             />
           </div>
+          <input
+            type="text"
+            value={outputValue || ''}
+            readOnly
+            placeholder="0"
+          />
           <span className="balance">Balance: {isEthToDapp ? parseFloat(tokenBalance).toFixed(4) : parseFloat(ethBalance).toFixed(4)}</span>
         </div>
 
         {/* Botão de Swap */}
-        <button className="swap-button" onClick={this.handleSwap} style={{ marginTop: '15px', padding: '10px 20px', fontSize: '16px' }}>
+        <button className="swap-button" onClick={this.handleSwap}>
           Swap
         </button>
       </div>

@@ -1,59 +1,78 @@
-/* Estilos para o dark mode */
 body.dark-mode {
-  background-color: #1e1e1e;
+  background-color: #121212;
   color: #ffffff;
 }
 
-.dark-mode .container {
-  background-color: #2b2b2b;
-  color: #ffffff;
-}
-
-.dark-mode .swap-container {
-  background-color: #333;
-  border-color: #444;
-}
-
-.dark-mode input {
-  background-color: #444;
-  color: #fff;
-}
-
-.dark-mode button {
-  background-color: #555;
-  color: #fff;
-}
-
-/* Botão de Dark Mode fixado fora da navbar */
-.dark-mode-toggle {
-  position: fixed;
-  top: 32px; /* Ajuste a posição vertical */
-  right: 20px; /* Ajuste a posição horizontal */
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  z-index: 1001; /* Garante que o botão fique acima de outros elementos */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .swap-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 0 auto;
+  max-width: 400px;
 }
 
-.input-group {
-  margin: 10px 0;
+body.dark-mode .swap-container {
+  background-color: #333333;
+}
+
+input {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.dark-mode input {
+  background-color: #444;
+  color: #ffffff;
 }
 
 .balance {
   font-size: 0.9rem;
   color: #888;
   margin-top: 5px;
+}
+
+body.dark-mode .balance {
+  color: #cccccc;
+}
+
+.swap-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-top: 20px;
+  width: 100%;
+  user-select: none;
+  outline: none;
+}
+
+body.dark-mode .swap-button {
+  background-color: #6a1b9a;
+}
+
+.swap-button:focus {
+  outline: none;
+}
+
+.swap-button:active {
+  outline: none;
 }
 
 .invert-button-container {
@@ -65,18 +84,45 @@ body.dark-mode {
 .invert-button {
   background: none;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 8px;
   cursor: pointer;
+  outline: none;
+  user-select: none;
 }
 
-.swap-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
+body.dark-mode .invert-button {
+  border-color: #6a1b9a;
+  background-color: #6a1b9a;
+  color: #fff;
+}
+
+.dark-mode-toggle {
+  position: fixed;
+  top: 38px;
+  right: 20px;
+  font-size: 1.8rem;
   cursor: pointer;
-  padding: 10px 20px;
-  font-size: 16px;
+  z-index: 1001;
+  background: none;
+  border: none;
 }
 
+.dark-mode-toggle:focus {
+  outline: none;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.input-group label {
+  margin-right: 10px;
+}
+
+.input-group img {
+  margin-right: 10px;
+}
